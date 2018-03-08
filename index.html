@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>simple arcanoid</title>
+	<style>
+	#my_canvas{
+	   position: relative;
+        background: black;
+        z-index: 200;
+		
+    }
+        
+	p{
+		float: right;
+		clear: right;
+		font-size: 30;
+		font-weight: bold;
+		background: grey;
+		padding: 50px;
+		margin:50px;
+		width: 100px;z`m      fvtn      vhuh
+	}
+    
+        #startmsg{
+        position: absolute;
+        top: 0px;
+        color:red;
+        z-index: 500;
+        }
+    
+       
+	</style>
+
+</head>
+
+<body>
+    
+    
+    <h1 id="startmsg">Press Enter to Start</h1>
+	<canvas id="my_canvas" width="800" height="600"></canvas>
+	<p id="score"></p>
+	<script>
+    var msghide = document.getElementById("startmsg");
+	var canvas = document.getElementById("my_canvas");
+	var ctx = canvas.getContext("2d");
+	var canvas_width = canvas.width;
+	var canvas_height = canvas.height;
+	var inter;
+	var bricks =[];
+	var dump = 0;
+	var score = 0;
+	var scoring = document.getElementById("score");
+	//ball placing
+	var x = 400;
+	var y = 300;
+	//change of ball placing
+	var dx = 3;
+	var dy = 3;
+	//change of pallet placing (to middle)
+	var px = (canvas_width * .5) - (100 * .5);
+	var py = canvas_height - 50;
+
+	var left = false;
+	var right = false;
+
+	var init = function init(){
+	   brickArray(7,4);
+	   inter = setInterval(draw,10);
+	}
+
+	//clearing canvas
+	function clear(){
+		ctx.clearRect(0,0,800,600);
+	}
+
+	function ball(){
+		ctx.beginPath();
+		ctx.arc(x,y,10,0,Math.PI*2,true);
+		ctx.closePath();
+		ctx.fillStyle = "white";
+		ctx.fill();
+	}
+
+	function paddle(x,y,w,h){
+		ctx.beginPath();
+		ctx.fillStyle = "white";
+		ctx.rect(x,y,w,h);
+		ctx.closePath();
+		ctx.fill();
+
+	}
+
+
+
+	/////////////////
+
+
+	function brickArray(r,c){
+		var x = 0;
+		var y = 0;
+		var w = canvas_width / r;
+		var h = 30;
+
+		for(var inc =0; inc < c; inc++){
+			for(var i =0; i < r; i++){
+				bricks.push({x:x,y:y,w:w,h:h,c:("rgb("+
+	  			Math.floor(Math.random()*256)+","+
+	  			Math.floor(Math.random()*256)+","+
+	  			Math.floor(Math.random()*256)+")")});
+				x = x + w;
+			}
+
+			y += 30;
+			x =0;
+		}
+	}
+
+	function brickDraw(){
+		if(bricks.length == dump){
+			clearInterval(inter);
+			alert("Congratulations ! You Won!");
+		}
+			
+		for(var i =0; i< bricks.length; i++){
+		ctx.beginPath()
+		ctx.fillStyle = bricks[i].c;
+		ctx.lineWidth = 3;
+		ctx.strokeRect(bricks[i].x,bricks[i].y,bricks[i].w,bricks[i].h);
+		ctx.rect(bricks[i].x,bricks[i].y,bricks[i].w,bricks[i].h);
+		ctx.closePath();
+		ctx.fill();
+		}
+	}
+
+	////////////////
+
+	function draw(){
+		clear();
+		scoring.innerHTML= "Score : " + "    " + score;
+		brickDraw()
+		ball();
+		paddle(px,py,100,30);
+		if(left && px > 2){
+			px -= 4;
+		}else if(right && px < 698){
+			px += 4;
+		}
+
+		x += dx;
+		y += dy;
+
+		
+		
+		if(y>540 && x == px || y>540 && x <= (px +101) && x > (px - 1)){
+			dy =-dy;
+			if(Math.random() == -1){
+				dx = -dx;
+			}else{
+				dx = dx;
+			}
+		}else if(y <0){
+				dy =-dy;
+		}else if(x>799 || x < 0){
+				dx = -dx;
+		}else if(y > 650){
+			  	clearInterval(inter);
+			  	alert("Game Over");
+                
+                
+		}
+
+		for(var i =0; i< bricks.length; i++){
+	    	if(bricks[i].y + 30 == y && x >= bricks[i].x && x <= bricks[i].x + bricks[i].w){
+	    		ctx.clearRect(bricks[i].x,bricks[i].y,bricks[i].w,bricks[i].h);
+	    		dy = -dy;
+	    		bricks[i].y = 0;
+	    		bricks[i].x = 0;
+	    		bricks[i].w = 0;
+	    		bricks[i].h = 0;
+	    		dump++;
+	    		score = score + 100;
+	    }}
+
+		
+	}//end of draw function
+
+	addEventListener('keydown',function(e){
+	 if(e.keyCode == 37){
+	 	left = true;
+	 }else if(e.keyCode == 39){
+	 	right = true;
+	 }
+	},false)
+
+	addEventListener('keyup',function(e){
+		if(e.keyCode == 37){
+			left = false;
+		}else if(e.keyCode == 39){
+			right = false;
+		}
+	},false)
+    
+    addEventListener('keydown',function(e){
+        
+        if(e.keyCode == 37){
+	 	
+
+            left = true;
+	 }else if(e.keyCode == 39){
+	 	right = true;
+	 }
+	},false)
+    
+    
+    
+
+	
+	</script>
+    <script src='bricksjs.js'></script>
+
+</body>
+</html>
+
+
+
+
+
